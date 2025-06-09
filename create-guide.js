@@ -41,6 +41,17 @@ var tour_guide_id = null;
 var client_exist = false;
 var is_client_company = true;
 
+// Date Time: YYYY-MM-DD HH:mm:ss
+const now = new Date();
+const nowFormatted =
+  `${now.getFullYear()}-${(now.getMonth() + 1)
+    .toString()
+    .padStart(2, "0")}-${now.getDate().toString().padStart(2, "0")} ` +
+  `${now.getHours().toString().padStart(2, "0")}:${now
+    .getMinutes()
+    .toString()
+    .padStart(2, "0")}:${now.getSeconds().toString().padStart(2, "0")}`;
+
 console.log("STEP 1: Reading CSV file...");
 console.log();
 
@@ -113,7 +124,15 @@ stream.on("data", async (row) => {
 
         //---End CSV search LOOP
         stream.destroy();
-        checkRemoteClient(first_name, middle_name, last_name);
+        //----------------------
+        if (email == "NONE") {
+          console.log(
+            `Client has NO EMAIL ADDRESS in the excel --------------- END`
+          );
+          process.exit();
+        } else {
+          checkRemoteClient(first_name, middle_name, last_name);
+        }
       }
     }
   } catch (err) {
@@ -261,7 +280,7 @@ function creatClient() {
 function checkRemoteTourGuide() {
   console.log();
   console.log(
-    `STEP 3: Check Tour Guide ${first_name_arg} ${middle_name_arg} ${last_name_arg} .... `
+    `STEP 4: Check Tour Guide ${first_name_arg} ${middle_name_arg} ${last_name_arg} .... `
   );
   console.log();
   axios
@@ -290,6 +309,7 @@ function checkRemoteTourGuide() {
         }
       } else {
         //Create TourGuide
+        console.log(`Tour Guide NOT exist. Continue next....`);
         createTourGuide();
       }
     })
@@ -304,7 +324,7 @@ function createTourGuide() {
   //----------- Create Tour Guide ------------
   console.log();
   console.log(
-    `STEP 4: Creating Tour Guide ${first_name_arg} ${middle_name_arg} ${last_name_arg} ....`
+    `STEP 5: Creating Tour Guide ${first_name_arg} ${middle_name_arg} ${last_name_arg} ....`
   );
   console.log();
 
@@ -363,7 +383,7 @@ function createTourGuide() {
 function approveTourGuide() {
   console.log();
   console.log(
-    `STEP 5: Tour Guide Approve ${first_name_arg} ${middle_name_arg} ${last_name_arg} .... `
+    `STEP 6: Tour Guide Approve ${first_name_arg} ${middle_name_arg} ${last_name_arg} .... `
   );
   console.log();
   axios
@@ -379,8 +399,8 @@ function approveTourGuide() {
           `Tour Guide Approve ${first_name_arg} ${middle_name_arg} ${last_name_arg} --- Approved Successfully....`
         );
 
-        //--- create License if license year is not 2025
-        if (license_year == "2025") createTourGuideLicense();
+        //Create Tour GUide license
+        createTourGuideLicense();
       } else {
         console.error("Tour Guide Approve Not Approve!");
       }
@@ -396,57 +416,64 @@ function approveTourGuide() {
 async function createTourGuideLicense() {
   console.log();
   console.log(
-    `STEP 6: Create Tour Guide License ${first_name_arg} ${middle_name_arg} ${last_name_arg} .... `
+    `STEP 7: Create Tour Guide License ${first_name_arg} ${middle_name_arg} ${last_name_arg} .... `
   );
   console.log();
 
-  //--- check if license id
-  const dup = await dblocal
-    .raw(`select * from ttlb_tour_guide_license where id = ?`, [
-      client.license_number,
-    ])
-    .then((r) => r.rows);
+  //--- create License
+  if (license_year == "2025") {
+    //--- check if license id
+    const dup = await dblocal
+      .raw(`select * from ttlb_tour_guide_license where id = ?`, [
+        client.license_number,
+      ])
+      .then((r) => r.rows);
 
-  if (dup.length != 0) {
-    console.log(
-      `Create Tour Guide License ${first_name_arg} ${middle_name_arg} ${last_name_arg} .... LICENSE EXIST!`
-    );
-    process.exit();
-  } else {
-    //--- Create License
-    const l = {
-      id: client.license_number,
-      bill_group_id: -1,
-      issied_date: "2025-01-01 00:00:00",
-      expiry_date: "2025-12-31 00:00:00",
-      year: 2025,
-      status: 0,
-      ttlb_tour_guide_id: tour_guide_id,
-      created_at: "2025-01-01 00:00:00",
-      updated_at: "2025-06-07 00:00:00",
-    };
-
-    console.log(`Create Tour Guide License object: `, l);
-
-    const wr = await dblocal("ttlb_tour_guide_license")
-      .insert(l)
-      .catch((error) => {
-        console.log(
-          "Create Tour Guide License error:",
-          error || error.response?.data
-        );
-      });
-
-    if (wr?.rowCount != 1) {
-      console.log(`Create Tour Guide License ---- Insert ERROR`);
-    } else {
-      console.log(`License Successfull ---- CREATED`);
-      console.log();
-      console.log(`----------------ALL SUCCESSFULLY---------------`);
-      console.log();
-      console.log();
+    if (dup.length != 0) {
+      console.log(
+        `Create Tour Guide License ${first_name_arg} ${middle_name_arg} ${last_name_arg} .... LICENSE EXIST!`
+      );
       process.exit();
+    } else {
+      //--- Create License
+      const l = {
+        id: client.license_number,
+        bill_group_id: -1,
+        issied_date: "2025-01-01 00:00:00",
+        expiry_date: "2025-12-31 00:00:00",
+        year: 2025,
+        status: 0,
+        ttlb_tour_guide_id: tour_guide_id,
+        created_at: "2025-01-01 00:00:00",
+        updated_at: nowFormatted,
+      };
+
+      console.log(`Create Tour Guide License object: `, l);
+
+      const wr = await dblocal("ttlb_tour_guide_license")
+        .insert(l)
+        .catch((error) => {
+          console.log(
+            "Create Tour Guide License error:",
+            error || error.response?.data
+          );
+        });
+
+      if (wr?.rowCount != 1) {
+        console.log(`Create Tour Guide License ---- Insert ERROR`);
+      } else {
+        console.log(`Tour Guide License Successfully Created ---- DONE!`);
+        console.log();
+        console.log(`*************** ALL SUCCESSFULL **************`);
+        console.log();
+        console.log();
+        process.exit();
+      }
     }
+  } else {
+    console.log(
+      `Year: ${license_year} License Number: ${client.license_number}  Tour Guide ID: ${tour_guide_id}`
+    );
   }
 }
 
