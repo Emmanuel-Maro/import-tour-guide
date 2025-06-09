@@ -171,25 +171,26 @@ function checkRemoteClient(_first_name, _middle_name, _last_name) {
           }
         )
         .then((response) => {
-          console.log(`Check client: `, response.data);
+          //console.log(`Check client: `, response.data);
           if (response.data.data && response.data.data.length > 0) {
             console.log(
-              `${_first_name} ${_middle_name} ${_last_name} Exist... Total: `,
-              response.data.data.length
+              `Client ${_first_name} ${_middle_name} ${_last_name} ------------------- EXIST in the Live Database!`
             );
 
             const remote_client = response.data.data;
 
             // get client id and check/create tour guide if client exist (single record)
             if (remote_client.length == 1) {
-              console.log("Existing client", remote_client[0]);
+              console.log(
+                `Client ID: ${remote_client[0].id} ---- Continue creating tour guide...`
+              );
               created_client_id = remote_client[0].id;
               checkRemoteTourGuide();
             } else if (remote_client.length > 1) {
               console.log("Multiple Client Exist--------------END");
 
               remote_client.forEach((item, index) => {
-                console.log(`Client Found:-----------------------------END`);
+                console.log(`Client Found:`);
                 console.log(`${index + 1}. ${item.name} - ${item.phone}`);
               });
               process.exit();
@@ -204,7 +205,10 @@ function checkRemoteClient(_first_name, _middle_name, _last_name) {
             //----------- Create Client ------------
             creatClient();
           } else {
-            console.error("Check Remote error:", error.response?.data);
+            console.error(
+              "Check Remote error:",
+              error.response?.data.message || error.response?.data || error
+            );
           }
         });
     })

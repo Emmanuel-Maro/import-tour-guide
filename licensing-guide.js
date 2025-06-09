@@ -19,17 +19,17 @@ const nowFormatted =
     .padStart(2, "0")}:${now.getSeconds().toString().padStart(2, "0")}`;
 
 //--------- guide details -------
-var license_number = 22895;
-var tour_guide_id = 4209;
-var start_data = "2023-01-01 00:00:00";
+var license_number = 21826;
+var tour_guide_id = 13831;
+var start_data = "2024-12-04 11:45:24";
 
 const l = {
   id: license_number,
   bill_group_id: -1,
   issied_date: start_data,
-  expiry_date: "2023-12-31 23:59:59",
-  year: 2023,
-  status: 0,
+  expiry_date: "2024-12-31 23:59:59",
+  year: 2024,
+  status: 1,
   ttlb_tour_guide_id: tour_guide_id,
   created_at: start_data,
   updated_at: nowFormatted,
