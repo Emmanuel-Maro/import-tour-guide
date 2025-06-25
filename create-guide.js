@@ -149,7 +149,7 @@ stream.on("end", () => {
 
   if (is_client_company) {
     console.log(
-      `OR Client ${first_name_arg} ${middle_name_arg} ${last_name_arg} --- BELONG to company!`
+      `OR Client ${first_name_arg} ${middle_name_arg} ${last_name_arg} --- BELONG to company OR Has no Selected Year License!`
     );
   }
 
@@ -442,7 +442,7 @@ async function createTourGuideLicense() {
         issied_date: "2025-01-01 00:00:00",
         expiry_date: "2025-12-31 00:00:00",
         year: 2025,
-        status: 0,
+        status: 1,
         ttlb_tour_guide_id: tour_guide_id,
         created_at: "2025-01-01 00:00:00",
         updated_at: nowFormatted,
@@ -462,9 +462,9 @@ async function createTourGuideLicense() {
       if (wr?.rowCount != 1) {
         console.log(`Create Tour Guide License ---- Insert ERROR`);
       } else {
-        console.log(`Tour Guide License Successfully Created ---- DONE!`);
+        console.log(`Tour Guide License ---- Successfully Created`);
         console.log();
-        console.log(`*************** ALL SUCCESSFULL **************`);
+        console.log(`*************** ALL SUCCESSFUL **************`);
         console.log();
         console.log();
         process.exit();

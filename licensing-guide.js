@@ -19,9 +19,9 @@ const nowFormatted =
     .padStart(2, "0")}:${now.getSeconds().toString().padStart(2, "0")}`;
 
 //--------- guide details -------
-var license_number = 26671;
-var tour_guide_id = 3509;
-var start_data = "2024-01-01 00:00:00";
+var license_number = 21167;
+var tour_guide_id = 14092;
+var start_data = "2024-07-10 00:00:00";
 
 const l = {
   id: license_number,
