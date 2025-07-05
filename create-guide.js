@@ -421,91 +421,93 @@ async function createTourGuideLicense() {
   console.log();
 
   //--- create License
-  //if (license_year == "2025") {
-  //--- check if license id
-  const dup = await dblocal
-    .raw(`select * from ttlb_tour_guide_license where id = ?`, [
-      client.license_number,
-    ])
-    .then((r) => r.rows);
 
-  if (dup.length != 0) {
-    console.log(
-      `Create Tour Guide License ${first_name_arg} ${middle_name_arg} ${last_name_arg} .... LICENSE EXIST!`
-    );
-    process.exit();
-  } else {
-    //--- Create License
-    var l = {};
-    if (license_year == "2025") {
-      l = {
-        id: client.license_number,
-        bill_group_id: -1,
-        issied_date: "2025-01-01 00:00:00",
-        expiry_date: "2025-12-31 00:00:00",
-        year: 2025,
-        status: 1,
-        ttlb_tour_guide_id: tour_guide_id,
-        created_at: "2025-01-01 00:00:00",
-        updated_at: nowFormatted,
-      };
-    }
+  const yearOptions = ["2025", "2024", "2023"];
+  if (yearOptions.includes(license_year)) {
+    //--- check if license id
+    const dup = await dblocal
+      .raw(`select * from ttlb_tour_guide_license where id = ?`, [
+        client.license_number,
+      ])
+      .then((r) => r.rows);
 
-    if (license_year == "2024") {
-      l = {
-        id: client.license_number,
-        bill_group_id: -1,
-        issied_date: `${args[4]} 00:00:00`,
-        expiry_date: "2024-12-31 00:00:00",
-        year: 2024,
-        status: 1,
-        ttlb_tour_guide_id: tour_guide_id,
-        created_at: `${args[4]} 00:00:00`,
-        updated_at: nowFormatted,
-      };
-    }
-
-    if (license_year == "2023") {
-      l = {
-        id: client.license_number,
-        bill_group_id: -1,
-        issied_date: `${args[4]} 00:00:00`,
-        expiry_date: "2023-12-31 00:00:00",
-        year: 2023,
-        status: 1,
-        ttlb_tour_guide_id: tour_guide_id,
-        created_at: `${args[4]} 00:00:00`,
-        updated_at: nowFormatted,
-      };
-    }
-
-    console.log(`Create Tour Guide License object: `, l);
-
-    const wr = await dblocal("ttlb_tour_guide_license")
-      .insert(l)
-      .catch((error) => {
-        console.log(
-          "Create Tour Guide License error:",
-          error || error.response?.data
-        );
-      });
-
-    if (wr?.rowCount != 1) {
-      console.log(`Create Tour Guide License ---- Insert ERROR`);
-    } else {
-      console.log(`Tour Guide License ---- Successfully Created`);
-      console.log();
-      console.log(`*************** ALL SUCCESSFUL **************`);
-      console.log();
-      console.log();
+    if (dup.length != 0) {
+      console.log(
+        `Create Tour Guide License ${first_name_arg} ${middle_name_arg} ${last_name_arg} .... LICENSE EXIST!`
+      );
       process.exit();
+    } else {
+      //--- Create License
+      var l = {};
+      if (license_year == "2025") {
+        l = {
+          id: client.license_number,
+          bill_group_id: -1,
+          issied_date: "2025-01-01 00:00:00",
+          expiry_date: "2025-12-31 00:00:00",
+          year: 2025,
+          status: 1,
+          ttlb_tour_guide_id: tour_guide_id,
+          created_at: "2025-01-01 00:00:00",
+          updated_at: nowFormatted,
+        };
+      }
+
+      if (license_year == "2024") {
+        l = {
+          id: client.license_number,
+          bill_group_id: -1,
+          issied_date: `${args[4]} 00:00:00`,
+          expiry_date: "2024-12-31 00:00:00",
+          year: 2024,
+          status: 1,
+          ttlb_tour_guide_id: tour_guide_id,
+          created_at: `${args[4]} 00:00:00`,
+          updated_at: nowFormatted,
+        };
+      }
+
+      if (license_year == "2023") {
+        l = {
+          id: client.license_number,
+          bill_group_id: -1,
+          issied_date: `${args[4]} 00:00:00`,
+          expiry_date: "2023-12-31 00:00:00",
+          year: 2023,
+          status: 1,
+          ttlb_tour_guide_id: tour_guide_id,
+          created_at: `${args[4]} 00:00:00`,
+          updated_at: nowFormatted,
+        };
+      }
+
+      console.log(`Create Tour Guide License object: `, l);
+
+      const wr = await dblocal("ttlb_tour_guide_license")
+        .insert(l)
+        .catch((error) => {
+          console.log(
+            "Create Tour Guide License error:",
+            error || error.response?.data
+          );
+        });
+
+      if (wr?.rowCount != 1) {
+        console.log(`Create Tour Guide License ---- Insert ERROR`);
+      } else {
+        console.log(`Tour Guide License ---- Successfully Created`);
+        console.log();
+        console.log(`*************** ALL SUCCESSFUL **************`);
+        console.log();
+        console.log();
+        process.exit();
+      }
     }
+  } else {
+    console.log(
+      `Year: ${license_year} License Number: ${client.license_number}  Tour Guide ID: ${tour_guide_id}`
+    );
   }
-  // } else {
-  //   console.log(
-  //     `Year: ${license_year} License Number: ${client.license_number}  Tour Guide ID: ${tour_guide_id}`
-  //   );
-  // }
 }
 
 function getGuideCategory(_name) {
