@@ -7,6 +7,12 @@ const dblocal = require("./db").pg(
   console
 );
 
+const args = process.argv.slice(2);
+
+const tour_guide_id = args[0];
+const license_number = args[1];
+const year = args[2];
+
 // Date Time: YYYY-MM-DD HH:mm:ss
 const now = new Date();
 const nowFormatted =
@@ -19,19 +25,19 @@ const nowFormatted =
     .padStart(2, "0")}:${now.getSeconds().toString().padStart(2, "0")}`;
 
 //--------- guide details -------
-var license_number = 21652;
-var tour_guide_id = 14502;
-var start_data = "2024-11-14 00:00:00";
+// var license_number = 27703;
+// var tour_guide_id = 1300;
+// var start_data = "2023-01-01 00:00:00";
 
 const l = {
   id: license_number,
   bill_group_id: -1,
-  issied_date: start_data,
-  expiry_date: "2024-12-31 23:59:59",
-  year: 2024,
+  issied_date: `${year}-01-01 00:00:00`,
+  expiry_date: `${year}-12-31 23:59:59`,
+  year: year,
   status: 1,
   ttlb_tour_guide_id: tour_guide_id,
-  created_at: start_data,
+  created_at: `${year}-01-01 00:00:00`,
   updated_at: nowFormatted,
 };
 
